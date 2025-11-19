@@ -53,7 +53,7 @@ struct MyApp: App {
 
 ### 2. Use Debug Print Statements
 
-**If using as a package**, replace your `print()` calls with `debugPrint()`:
+**If using as a package**, replace your `print()` calls with `consolePrint()`:
 
 ```swift
 debugPrint("User logged in")
@@ -68,7 +68,7 @@ debugPrint("Error: \(error.localizedDescription)")
 To convert all print statements in your project:
 1. Open Xcode's Find & Replace (`⌘⇧F`)
 2. Find: `print(`
-3. Replace: `debugPrint(`
+3. Replace: `consolePrint(`
 4. Review and replace in your project files
 
 ## How It Works
@@ -79,11 +79,22 @@ The console overlay consists of three main components:
 2. **Floating Button**: Always-visible button that opens the console sheet
 3. **Hint View**: Temporarily shows the latest log next to the button
 
-When you call `debugPrint()`, the message is:
+When you call `consolePrint()`, the message is:
 - Added to the console manager with a timestamp
 - Displayed in the hint view for 5 seconds
 - Still printed to Xcode console (when connected)
 - Available in the full console sheet
+
+### Or
+
+In your project, redefine the print function to call `consolePrint()`:
+
+```swift
+public func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+
+    consolePrint(items, separator: separator, terminator: terminator)
+}
+```
 
 ## Customization
 
@@ -134,7 +145,7 @@ struct ContentView: View {
             Button("Increment") {
 
                 counter += 1
-                debugPrint("Counter incremented to \(counter)")
+                consolePrint("Counter incremented to \(counter)")
             }
             .buttonStyle(.borderedProminent)
             
@@ -142,7 +153,7 @@ struct ContentView: View {
 
                 for i in 1...5 {
 
-                    debugPrint("Log entry #\(i)")
+                    consolePrint("Log entry #\(i)")
                 }
             }
             .buttonStyle(.bordered)
