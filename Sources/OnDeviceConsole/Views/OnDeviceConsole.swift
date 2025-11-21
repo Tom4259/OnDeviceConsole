@@ -10,42 +10,52 @@ import SwiftUI
 struct ConsoleOverlayView: View {
     
     @State private var consoleManager = ConsoleManager.shared
+    
+    @State private var showButton = true
+    
     @State private var isSheetPresented = false
+    
     @State private var showHint = false
     @State private var hintTimer: Timer?
     
     var body: some View {
         
-        VStack(alignment: .leading) {
+        if showButton {
             
-            HStack(spacing: 12) {
+            VStack(alignment: .leading) {
                 
-                floatingButton
-                
-                if showHint, let latestLog = consoleManager.logs.last {
+                HStack(spacing: 12) {
                     
-                    hintView(log: latestLog)
-                        .transition(.move(edge: .leading).combined(with: .opacity))
+                    floatingButton
+                    
+                    if showHint, let latestLog = consoleManager.logs.last {
+                        
+                        hintView(log: latestLog)
+                            .transition(.move(edge: .leading).combined(with: .opacity))
+                    }
+                    
+                    Spacer()
                 }
+                .padding(.top, 60)
+                .padding(.leading, 16)
                 
                 Spacer()
             }
-            .padding(.top, 60)
-            .padding(.leading, 16)
             
-            Spacer()
-        }
-        .onChange(of: consoleManager.logs.count) {
+            .onChange(of: consoleManager.logs.count) {
+                
+                showHintTemporarily()
+            }
             
-            showHintTemporarily()
-        }
-        .sheet(isPresented: $isSheetPresented) {
-            
-            consoleSheet
+            .sheet(isPresented: $isSheetPresented) {
+                
+                consoleSheet
+            }
         }
     }
     
     private var floatingButton: some View {
+        
         Button(action: {
             isSheetPresented = true
             showHint = false
@@ -114,12 +124,17 @@ struct ConsoleOverlayView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItemGroup(placement: .topBarLeading) {
                     
                     Button("Clear") { consoleManager.clearLogs() }
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .topBarLeading) {
+                    
+                    Button("Hide Button") { showButton = false; isSheetPresented = false }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
                     
                     Button("Done") { isSheetPresented = false }
                 }
